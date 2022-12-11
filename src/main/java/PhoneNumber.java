@@ -121,10 +121,8 @@ class PhoneNumber {
                 int ambiguity = generateAmbiguitiesFromTwoDigits(number[index]);
                 number[index] = ambiguity;//update the array
 
-                //print results
-                String isValid = validateGreekNumber(number).isValid() ? "VALID" : "INVALID";
-                String numberStr = getNumberToString(validateGreekNumber(number).getNumber());
-                System.out.println(numberStr + " [phone number:" + isValid + "]");
+                //print result
+                System.out.println(validateGreekNumber(number));
                 isRun = true;
             }
         }
@@ -147,10 +145,8 @@ class PhoneNumber {
                     removeZero(Integer.toString(number[index]));//remove the zeros from integer
             number[index] = Integer.parseInt(ambiguityS);//parse string to integer and update array
 
-            //print results
-            String isValid = validateGreekNumber(number).isValid() ? "VALID" : "INVALID";
-            String numberStr = getNumberToString(validateGreekNumber(number).getNumber());
-            System.out.println(numberStr + " [phone number:" + isValid + "]");
+            //print result
+            System.out.println(validateGreekNumber(number));
 
         }
     }

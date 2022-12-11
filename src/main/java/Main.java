@@ -20,9 +20,7 @@ public class Main {
 
 
         //first interpretation//run validateGreekNumber to validate the number
-        String isValid = phoneNumber.validateGreekNumber(numberArray).isValid() ? "VALID" : "INVALID";
-        String numberStr = phoneNumber.getNumberToString(phoneNumber.validateGreekNumber(numberArray).getNumber());
-        System.out.println(numberStr + " [phone number:" + isValid + "]");
+        System.out.println(phoneNumber.validateGreekNumber(numberArray));
 
         //handle ambiguities// return true to check if the method(void) ran without problem
         boolean isRun = phoneNumber.handleNumberAmbiguities(phoneNumber);
