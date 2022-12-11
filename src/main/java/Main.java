@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         String number = "";
 
         //insert number
@@ -10,20 +10,22 @@ public class Main {
         System.out.print("Input a number:");
         number = sc.nextLine().trim();
 
+        //convert string to array of integers split by space
         int[] numberArray = Arrays.stream(number.split(" "))
                 .mapToInt(Integer::parseInt)
                 .toArray();
 
+        //phone number instance
         PhoneNumber phoneNumber = new PhoneNumber(numberArray);
 
 
+        //first interpretation//run validateGreekNumber to validate the number
         String isValid = phoneNumber.validateGreekNumber(numberArray).isValid() ? "VALID" : "INVALID";
         String numberStr = phoneNumber.getNumberToString(phoneNumber.validateGreekNumber(numberArray).getNumber());
         System.out.println(numberStr + " [phone number:" + isValid + "]");
 
+        //handle ambiguities// return true to check if the method(void) ran without problem
         boolean isRun = phoneNumber.handleNumberAmbiguities(phoneNumber);
-
-//        System.out.println(isRun);
     }
 
 }

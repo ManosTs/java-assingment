@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -11,14 +8,13 @@ class PhoneNumber {
 
     private String prefix;
 
-    private List<String> interpretations = new ArrayList<String>();
+
+    //default constructor
+    public PhoneNumber() {
+    }
 
     public PhoneNumber(int[] number) {
         this.number = number;
-    }
-
-    public PhoneNumber() {
-
     }
 
     public int[] getNumber() {
@@ -29,18 +25,11 @@ class PhoneNumber {
         return isValid;
     }
 
-    public void addInterpretations(String interpretation) {
-        this.interpretations.add(interpretation);
-    }
-
-    public List<String> getInterpretations() {
-        return interpretations;
-    }
-
     public void setValid(boolean valid) {
         isValid = valid;
     }
 
+    //number array to string
     public String getNumberToString(int[] number) {
         return IntStream.of(number)
                 .mapToObj(String::valueOf)
@@ -63,32 +52,34 @@ class PhoneNumber {
 
     public PhoneNumber validateGreekNumber(int[] number) {
         PhoneNumber newPhone = new PhoneNumber(number);
-        String phoneNumber = newPhone.getNumberToString(newPhone.getNumber());
-        newPhone.setValid(false);
 
-        //if the number is 10 digits but doesn't start with 2 or 69, false
-        if (phoneNumber.length() == 10 &&
-                phoneNumber.startsWith("2")) {
+        String phoneNumber = newPhone.getNumberToString(newPhone.getNumber());//number array to string
+
+        newPhone.setValid(false);//default false
+
+        //if the number is 10 digits and starts with 2 or 69
+        if (
+                phoneNumber.length() == 10 && (phoneNumber.startsWith("2") ||
+                        phoneNumber.startsWith("69"))
+        ) {
             newPhone.setValid(true);
         }
 
-
-        if (phoneNumber.length() == 10 &&
-                phoneNumber.startsWith("69")) {
+        //if the number is 14 digits and starts with 00302 or 003069
+        if (
+                phoneNumber.length() == 14 && (phoneNumber.startsWith("00302") ||
+                        phoneNumber.startsWith("003069"))
+        ) {
             newPhone.setValid(true);
         }
 
-        //if the number is 14 digits but doesn't start with 00302 or 003069, false
-        if (phoneNumber.length() == 14 &&
-                phoneNumber.startsWith("00302")) {
-            newPhone.setValid(true);
-        }
+        handlePrefixes(phoneNumber);
 
-        if (phoneNumber.length() == 14 &&
-                phoneNumber.startsWith("003069")) {
-            newPhone.setValid(true);
-        }
+        return newPhone;
+    }
 
+    private void handlePrefixes(String phoneNumber){
+        //set the prefixes
         if (phoneNumber.startsWith("00302")) {
             setPrefix("00302");
         }
@@ -103,8 +94,6 @@ class PhoneNumber {
         if (phoneNumber.startsWith("2")) {
             setPrefix("2" + phoneNumber.substring(1, 3));
         }
-
-        return newPhone;
     }
 
     public boolean handleNumberAmbiguities(PhoneNumber phoneNumber) {
@@ -115,20 +104,24 @@ class PhoneNumber {
 
     private boolean twoDigitsAmbiguities(int[] number, String prefix) {
         boolean isRun = false;
+
+        //start index after the prefix
         int startIndex = 0;
         if (prefix.length() == 3) {
             startIndex = 2;
         }
-
         if (prefix.length() == 4) {
             startIndex = 3;
         }
 
+        //first find the three digits ambiguities and then run the logic for two digit
         for (int index = startIndex; index < number.length - 1; ++index) {
             threeDigitsAmbiguities(number, index);
             if (String.valueOf(number[index]).length() == 2) {
                 int ambiguity = generateAmbiguitiesFromTwoDigits(number[index]);
-                number[index] = ambiguity;
+                number[index] = ambiguity;//update the array
+
+                //print results
                 String isValid = validateGreekNumber(number).isValid() ? "VALID" : "INVALID";
                 String numberStr = getNumberToString(validateGreekNumber(number).getNumber());
                 System.out.println(numberStr + " [phone number:" + isValid + "]");
@@ -136,7 +129,7 @@ class PhoneNumber {
             }
         }
 
-        //if array does not have single digit numbers execute the logic for threedigits ambiguity;
+        //if array does not have single-digit numbers execute the logic for three-digits ambiguity;
         if (!arrayHasOnlyOneDigitNumbers(number, prefix)) {
             for (int index = startIndex; index < number.length - 1; ++index) {
                 threeDigitsAmbiguities(number, index);
@@ -151,8 +144,10 @@ class PhoneNumber {
         if (String.valueOf(number[index]).length() == 3 &&
                 isMiddleNumberZero(number[index])) {
             String ambiguityS =
-                    removeZero(Integer.toString(number[index]));
-            number[index] = Integer.parseInt(ambiguityS);
+                    removeZero(Integer.toString(number[index]));//remove the zeros from integer
+            number[index] = Integer.parseInt(ambiguityS);//parse string to integer and update array
+
+            //print results
             String isValid = validateGreekNumber(number).isValid() ? "VALID" : "INVALID";
             String numberStr = getNumberToString(validateGreekNumber(number).getNumber());
             System.out.println(numberStr + " [phone number:" + isValid + "]");
@@ -179,21 +174,29 @@ class PhoneNumber {
         return countDigits == number.length - startIndex;
     }
 
+    //generate two digit ambiguity
     private int generateAmbiguitiesFromTwoDigits(int number) {
         int firstDigit = 0;
         int lastDigit = number % 10;
 
 
+        //find first digit
         while (number > 10) {
             number = number / 10;
             firstDigit = number;
         }
+
+        //if last number is zero remove it, hence return just the first digit of number
         if (lastDigit == 0) {
             return firstDigit;
         }
+
+        //otherwise two-digit number to three
         return (firstDigit * 100) + lastDigit;
     }
 
+
+    //check if the middle digit is zero
     private boolean isMiddleNumberZero(int number) {
         int middle = 0;
         int a = number;
@@ -202,12 +205,12 @@ class PhoneNumber {
             number = number / 10;
             noOfDigits++;
         }
-        if (noOfDigits % 2 == 1) {
+        if (noOfDigits % 2 == 1) {//if
             for (int i = 0; i < (noOfDigits / 2) + 1; i++) {
                 middle = a % 10;
                 a = a / 10;
             }
-            return middle == 0;
+            return middle == 0;//if middle is zero return true
         }
 
         return false;
