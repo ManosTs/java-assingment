@@ -104,18 +104,12 @@ class PhoneNumber {
 
     private boolean twoDigitsAmbiguities(int[] number, String prefix) {
         boolean isRun = false;
-
         //start index after the prefix
-        int startIndex = 0;
-        if (prefix.length() == 3) {
-            startIndex = 2;
-        }
-        if (prefix.length() == 4) {
-            startIndex = 3;
-        }
+        int startIndex = findStartIndex(prefix);
+
 
         //first find the three digits ambiguities and then run the logic for two digit
-        for (int index = startIndex; index < number.length - 1; ++index) {
+        for (int index = startIndex; index < number.length; ++index) {
             threeDigitsAmbiguities(number, index);
             if (String.valueOf(number[index]).length() == 2) {
                 int ambiguity = generateAmbiguitiesFromTwoDigits(number[index]);
@@ -129,7 +123,7 @@ class PhoneNumber {
 
         //if array does not have single-digit numbers execute the logic for three-digits ambiguity;
         if (!arrayHasOnlyOneDigitNumbers(number, prefix)) {
-            for (int index = startIndex; index < number.length - 1; ++index) {
+            for (int index = startIndex; index < number.length; ++index) {
                 threeDigitsAmbiguities(number, index);
                 isRun = true;
             }
@@ -152,14 +146,7 @@ class PhoneNumber {
     }
 
     private boolean arrayHasOnlyOneDigitNumbers(int[] number, String prefix) {
-        int startIndex = 0;
-        if (prefix.length() == 3) {
-            startIndex = 2;
-        }
-
-        if (prefix.length() == 4) {
-            startIndex = 3;
-        }
+        int startIndex = findStartIndex(prefix);
         int countDigits = 1;
 
         for (int i = startIndex; i < number.length - 1; i++) {
@@ -168,6 +155,22 @@ class PhoneNumber {
             }
         }
         return countDigits == number.length - startIndex;
+    }
+
+    private int findStartIndex(String prefix) {
+        int startIndex = 0;
+        try{
+
+            if (prefix.length() == 3) {
+                startIndex = 2;
+            }
+            if (prefix.length() == 4) {
+                startIndex = 3;
+            }
+        }catch (NullPointerException e){
+            System.out.println("PHONE HAS NO PREFIX");
+        }
+        return startIndex;
     }
 
     //generate two digit ambiguity
